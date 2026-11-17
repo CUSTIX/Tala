@@ -1,5 +1,5 @@
 {% extends "core/base.html" %}
-{% load static %}
+{% load static tala %}
 {% block title %}Scan QR · {{ section.name }}{% endblock %}
 {% block main %}
 <div class="wrap">{% include "classroom/_head.html" %}</div>
@@ -12,6 +12,7 @@
         <div class="viewfinder__frame" aria-hidden="true"></div>
         <div class="viewfinder__idle" data-idle>
           <div>
+            {% icon "camera" %}
             <p>Point the camera at a learner's QR card. Each card marks that learner present for today.</p>
             <button class="btn btn--primary" type="button" data-start>Start camera</button>
           </div>
@@ -26,7 +27,7 @@
     </div>
     <section class="card">
       <h2>Today</h2>
-      <p><b data-marked>{{ marked }}</b> of {{ size }} marked</p>
+      <p><span class="big-count" data-marked>{{ marked }}</span> <span class="muted">of {{ size }} marked</span></p>
       <p class="muted small" data-status role="status" aria-live="polite">Ready.</p>
       <ul class="scan-log" data-log></ul>
       <div class="actions">

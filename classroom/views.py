@@ -26,6 +26,7 @@ def dashboard(request):
     for section in sections:
         section.today = attendance.day_counts(section, today)
         section.marked = sum(section.today.values())
+        section.marked_pct = round(100 * section.marked / section.size) if section.size else 0
     return render(request, "classroom/dashboard.html", {"sections": sections, "today": today})
 
 

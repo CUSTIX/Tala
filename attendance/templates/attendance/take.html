@@ -1,21 +1,22 @@
 {% extends "core/base.html" %}
+{% load tala %}
 {% block title %}Attendance · {{ section.name }}{% endblock %}
 {% block main %}
 <div class="wrap">{% include "classroom/_head.html" %}</div>
 <div class="wrap page">
   <div class="daybar">
     <div class="actions">
-      <a class="btn btn--small" href="?date={{ previous|date:'Y-m-d' }}&mode={{ mode }}" aria-label="Previous day">←</a>
+      <a class="btn btn--small" href="?date={{ previous|date:'Y-m-d' }}&mode={{ mode }}" aria-label="Previous day">{% icon "arrow-left" %}</a>
       <form method="get" class="inline"><input type="hidden" name="mode" value="{{ mode }}">
         <label class="sr-only" for="date">Date</label>
         <input id="date" type="date" name="date" value="{{ day|date:'Y-m-d' }}" max="{% now 'Y-m-d' %}" data-autosubmit>
       </form>
-      {% if not is_today %}<a class="btn btn--small" href="?date={{ next|date:'Y-m-d' }}&mode={{ mode }}" aria-label="Next day">→</a>{% endif %}
+      {% if not is_today %}<a class="btn btn--small" href="?date={{ next|date:'Y-m-d' }}&mode={{ mode }}" aria-label="Next day">{% icon "arrow-right" %}</a>{% endif %}
       <strong>{% if is_today %}Today{% else %}{{ day|date:"D, M j" }}{% endif %}</strong>
     </div>
     <div class="actions">
-      {% for key, label in modes.items %}<a class="btn btn--small" href="?date={{ day|date:'Y-m-d' }}&mode={{ key }}" aria-pressed="{% if key == mode %}true{% else %}false{% endif %}">{{ label }}</a>{% endfor %}
-      {% if is_today %}<a class="btn btn--small" href="{% url 'attendance:scan' section.pk %}">Scan QR</a>{% endif %}
+      <div class="segmented" role="group" aria-label="How to take attendance">{% for key, label in modes.items %}<a class="btn btn--small" href="?date={{ day|date:'Y-m-d' }}&mode={{ key }}" aria-pressed="{% if key == mode %}true{% else %}false{% endif %}">{{ label }}</a>{% endfor %}</div>
+      {% if is_today %}<a class="btn btn--small" href="{% url 'attendance:scan' section.pk %}">{% icon "qr" %} Scan QR</a>{% endif %}
       <a class="btn btn--small" href="{% url 'attendance:report' section.pk %}?month={{ day|date:'Y-m' }}">Monthly report</a>
     </div>
   </div>
@@ -97,7 +98,7 @@
           {% for code, n in counts.items %}<span class="pill st-{{ code }}">{{ n }} {{ code }}</span> {% empty %}<span class="muted">Nothing marked yet</span>{% endfor %}
         </p>
         <div class="actions">
-          <button type="button" class="btn js-only" data-all-present>Everyone else present</button>
+          <button type="button" class="btn js-only" data-all-present><span class="hide-sm">Everyone else present</span><span class="show-sm">Rest present</span></button>
           <button class="btn btn--primary">Save attendance</button>
         </div>
       </div>

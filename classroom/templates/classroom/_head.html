@@ -1,14 +1,19 @@
-<div class="class-head">
-  <p class="small muted"><a href="{% url 'classroom:dashboard' %}">My classes</a> / {{ section.school_year }}</p>
-  <div class="class-head__title">
-    <h1>{{ section.name }}</h1>
-    <span class="muted">{{ section.subject }}</span>
+{% load tala %}<div class="class-head">
+  <div class="banner">
+    <p class="banner__crumbs"><a href="{% url 'classroom:dashboard' %}">← My classes</a></p>
+    <div class="banner__title">
+      <h1>{{ section.name }}</h1>
+    </div>
+    <div class="banner__meta">
+      <span class="chip-light">{% icon "book" %} {{ section.subject }}</span>
+      <span class="chip-light">{{ section.school_year }}</span>
+    </div>
   </div>
   <nav class="tabs" aria-label="Class">
-    <a href="{% url 'classroom:section' section.pk %}"{% if tab == "learners" %} aria-current="page"{% endif %}>Learners</a>
-    <a href="{% url 'attendance:take' section.pk %}"{% if tab == "attendance" %} aria-current="page"{% endif %}>Attendance</a>
-    <a href="{% url 'classroom:seats' section.pk %}"{% if tab == "seats" %} aria-current="page"{% endif %}>Seat plan</a>
-    <a href="{% url 'grades:book' section.pk %}"{% if tab == "grades" %} aria-current="page"{% endif %}>Grades</a>
-    <a href="{% url 'classroom:picker' section.pk %}"{% if tab == "picker" %} aria-current="page"{% endif %}>Picker</a>
+    <a href="{% url 'classroom:section' section.pk %}"{% if tab == "learners" %} aria-current="page"{% endif %}>{% icon "users" %}<span>Learners</span></a>
+    <a href="{% url 'attendance:take' section.pk %}"{% if tab == "attendance" %} aria-current="page"{% endif %}>{% icon "check" %}<span>Attendance</span></a>
+    <a href="{% url 'classroom:seats' section.pk %}"{% if tab == "seats" %} aria-current="page"{% endif %}>{% icon "grid" %}<span>Seat plan</span></a>
+    <a href="{% url 'grades:book' section.pk %}"{% if tab == "grades" %} aria-current="page"{% endif %}>{% icon "chart" %}<span>Grades</span></a>
+    <a href="{% url 'classroom:picker' section.pk %}"{% if tab == "picker" %} aria-current="page"{% endif %}>{% icon "spark" %}<span>Picker</span></a>
   </nav>
 </div>

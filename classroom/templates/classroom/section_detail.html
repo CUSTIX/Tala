@@ -1,4 +1,5 @@
 {% extends "core/base.html" %}
+{% load tala %}
 {% block title %}{{ section.name }}{% endblock %}
 {% block main %}
 <div class="wrap">{% include "classroom/_head.html" %}</div>
@@ -8,15 +9,15 @@
       {% for code, n in counts.items %}<span class="pill st-{{ code }}">{{ n }} {{ code }}</span> {% empty %}not taken yet{% endfor %}
     </p>
     <div class="actions">
-      <a class="btn btn--primary" href="{% url 'classroom:learners_add' section.pk %}">Add learners</a>
-      <a class="btn" href="{% url 'classroom:qr_cards' section.pk %}">Print QR cards</a>
-      <a class="btn" href="{% url 'classroom:section_edit' section.pk %}">Edit class</a>
+      <a class="btn btn--primary" href="{% url 'classroom:learners_add' section.pk %}">{% icon "plus" %} Add learners</a>
+      <a class="btn" href="{% url 'classroom:qr_cards' section.pk %}">{% icon "qr" %} QR cards</a>
+      <a class="btn" href="{% url 'classroom:section_edit' section.pk %}">{% icon "edit" %} Edit</a>
     </div>
   </div>
   {% if learners %}
   <div class="table-wrap">
     <table>
-      <thead><tr><th>#</th><th>Learner</th><th>Attendance</th><th class="num">Rate</th></tr></thead>
+      <thead><tr><th>#</th><th>Learner</th><th class="hide-sm">Attendance</th><th class="num">Rate</th></tr></thead>
       <tbody>
       {% regroup learners by get_sex_display as groups %}
       {% for group in groups %}
@@ -25,7 +26,7 @@
         <tr>
           <td class="muted">{{ forloop.counter }}</td>
           <td><a href="{% url 'classroom:learner' section.pk x.pk %}">{{ x.name }}</a></td>
-          <td>{% if x.rate is not None %}<meter min="0" max="100" low="80" high="90" optimum="100" value="{{ x.rate }}">{{ x.rate }}%</meter>{% else %}<span class="muted small">No records</span>{% endif %}</td>
+          <td class="hide-sm">{% if x.rate is not None %}<meter min="0" max="100" low="80" high="90" optimum="100" value="{{ x.rate }}">{{ x.rate }}%</meter>{% else %}<span class="muted small">No records</span>{% endif %}</td>
           <td class="num">{% if x.rate is not None %}{{ x.rate }}%{% else %}-{% endif %}</td>
         </tr>
         {% endfor %}

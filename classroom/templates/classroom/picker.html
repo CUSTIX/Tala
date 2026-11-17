@@ -6,9 +6,9 @@
   {{ names|json_script:"picker-names" }}
   <div class="card picker" data-picker>
     <p class="muted">Recitation: who's next?</p>
-    <p class="picker__name" data-picker-name aria-live="polite">Tap “Pick”</p>
+    <div class="picker__stage"><p class="picker__name" data-picker-name aria-live="polite">Tap “Pick”</p></div>
     <div class="actions actions--center">
-      <button class="btn btn--primary" type="button" data-picker-go>Pick</button>
+      <button class="btn btn--primary" type="button" data-picker-go>{% load tala %}{% icon "shuffle" %} Pick</button>
       <button class="btn" type="button" data-picker-reset>Start over</button>
     </div>
     <p><label class="check"><input type="checkbox" data-picker-present checked> Only learners present today</label></p>

@@ -93,7 +93,7 @@ def test_share_page_is_public_read_only_and_not_indexed(client, section, learner
 @pytest.mark.django_db
 def test_qr_cards_page(signed_in, section, learners):
     content = signed_in.get(reverse("classroom:qr_cards", args=[section.pk])).content
-    assert content.count(b"<svg") == len(learners)
+    assert content.count(b'class="segno"') == len(learners)
 
 
 @pytest.mark.django_db

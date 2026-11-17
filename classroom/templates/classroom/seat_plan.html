@@ -1,4 +1,5 @@
 {% extends "core/base.html" %}
+{% load tala %}
 {% block title %}Seat plan · {{ section.name }}{% endblock %}
 {% block main %}
 <div class="wrap">{% include "classroom/_head.html" %}</div>
@@ -6,7 +7,7 @@
   {% csrf_token %}
   <p class="hint js-only no-print">Tap a learner, then tap a seat to move them there (swaps if taken). On a computer you can also drag. Tap the same learner again to cancel.</p>
   <div class="room">
-    <div class="board">Front · board</div>
+    <div class="board">Front · Board</div>
     <div class="seats cols-{{ section.seat_cols }}">
       {% for row in grid %}{% with r=forloop.counter0 %}{% for learner in row %}
         {% if learner %}
@@ -41,8 +42,8 @@
         <div class="field"><label for="how">Order</label>
           <select id="how" name="how">{% for key, label in arrangements.items %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select>
         </div>
-        <div class="actions"><button class="btn btn--primary">Rearrange</button>
-          <button class="btn js-only" type="button" data-print>Print seat plan</button></div>
+        <div class="actions"><button class="btn btn--primary">{% icon "shuffle" %} Rearrange</button>
+          <button class="btn js-only" type="button" data-print>{% icon "print" %} Print</button></div>
       </form>
       <form method="post" class="actions" data-confirm="Take everyone off the seat plan?">{% csrf_token %}<input type="hidden" name="action" value="clear"><button class="btn btn--link btn--danger">Clear all seats</button></form>
     </section>
