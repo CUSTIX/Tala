@@ -1,0 +1,32 @@
+services:
+  db:
+    # Same engine and major version as production (Neon).
+    image: postgres:17
+    env_file: .env
+    # No `ports:` on purpose: Postgres is reachable only by `web`, over the Compose network.
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      target: dev
+    env_file: .env
+    # Migrate on start, so `docker compose up` gives a working app.
+    command: sh -c "python manage.py migrate --noinput && python manage.py createcachetable && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8000}:8000"   # localhost only; WEB_PORT in .env if 8000 is taken
+    # DEV ONLY: bind-mounts the source so edits reload without a rebuild.
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

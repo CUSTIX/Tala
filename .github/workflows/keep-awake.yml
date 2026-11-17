@@ -1,0 +1,18 @@
+# Render's free web service sleeps after 15 minutes without traffic. This pings /livez/ (no
+# database query, so the free Neon database can still suspend) to keep the demo answering fast.
+name: Keep awake
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    if: github.repository == 'CUSTIX/Tala'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - run: curl --fail --silent --show-error --max-time 90 --retry 2 https://tala-ph.onrender.com/livez/
