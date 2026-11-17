@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Scan QR · {{ section.name }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page">
+  <div class="scanner" data-scanner data-url="{% url 'attendance:scan_mark' section.pk %}" data-jsqr="{% static 'core/vendor/jsQR.js' %}">
+    {% csrf_token %}
+    <div class="stack">
+      <div class="viewfinder">
+        <video data-video playsinline muted></video>
+        <div class="viewfinder__frame" aria-hidden="true"></div>
+        <div class="viewfinder__idle" data-idle>
+          <div>
+            <p>Point the camera at a learner's QR card. Each card marks that learner present for today.</p>
+            <button class="btn btn--primary" type="button" data-start>Start camera</button>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <label class="check"><input type="checkbox" data-late> Mark scans as late</label>
+        <button class="btn btn--small" type="button" data-stop>Stop camera</button>
+      </div>
+      <p class="small muted">The camera stays on this phone: only the code on the card is sent. <a href="{% url 'classroom:qr_cards' section.pk %}">Print QR cards</a></p>
+      <noscript><p>The scanner needs JavaScript. Use <a href="{% url 'attendance:take' section.pk %}">the list</a> instead.</p></noscript>
+    </div>
+    <section class="card">
+      <h2>Today</h2>
+      <p><b data-marked>{{ marked }}</b> of {{ size }} marked</p>
+      <p class="muted small" data-status role="status" aria-live="polite">Ready.</p>
+      <ul class="scan-log" data-log></ul>
+      <div class="actions">
+        <a class="btn btn--primary" href="{% url 'attendance:take' section.pk %}">Finish on the seat plan</a>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

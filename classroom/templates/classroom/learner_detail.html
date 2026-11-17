@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+{% block title %}{{ learner.name }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page stack">
+  <div class="page-head">
+    <div>
+      <h2>{{ learner.name }}</h2>
+      <p class="muted">{{ learner.get_sex_display }}{% if learner.is_seated %} · seat: row {{ learner.seat_row|add:1 }}, column {{ learner.seat_col|add:1 }}{% endif %}</p>
+    </div>
+    <div class="actions">
+      <a class="btn" href="{% url 'classroom:learner_edit' section.pk learner.pk %}">Edit</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="form-grid">
+      <div class="qr-single">{{ qr }}<p class="small muted">QR card: scan it in Attendance › Scan QR.</p></div>
+      <div>
+        <h3>Parent link</h3>
+        <p class="muted small">Read-only: attendance and scores. Anyone with the link can open it, so send it only to the learner or their parent.</p>
+        <div class="field"><label for="share">Link</label><input id="share" type="text" value="{{ share_url }}" readonly></div>
+        <div class="actions">
+          <button class="btn btn--small js-only" type="button" data-copy="#share">Copy link</button>
+          <form method="post" action="{% url 'classroom:learner_new_link' section.pk learner.pk %}" class="inline" data-confirm="Make a new link? The old link will stop working.">{% csrf_token %}<button class="btn btn--small">New link</button></form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include "classroom/_report.html" %}
+  {% if recent %}
+  <section class="card">
+    <h2>Recent days</h2>
+    <p>{% for m in recent %}<span class="pill st-{{ m.status }}" title="{{ m.meeting.date|date:'M j' }}: {{ m.get_status_display }}">{{ m.meeting.date|date:"M j" }} · {{ m.status }}</span> {% endfor %}</p>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

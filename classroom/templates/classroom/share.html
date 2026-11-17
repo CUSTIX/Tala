@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}
+{% block title %}{{ learner.first_name }}'s record{% endblock %}
+{% block content %}
+<div class="stack">
+  <div>
+    <p class="muted small">{{ section.name }} · {{ section.subject }} · {{ section.school_year }}</p>
+    <h1>{{ learner.first_name }} {{ learner.last_name }}</h1>
+    <p class="muted">Read-only report from the teacher's class record.</p>
+  </div>
+  {% include "classroom/_report.html" %}
+</div>
+{% endblock %}

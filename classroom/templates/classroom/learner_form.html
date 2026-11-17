@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% block title %}Edit {{ learner.name }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page">
+  <div class="card">
+    <h2>Edit learner</h2>
+    <form method="post">{% csrf_token %}
+      <div class="form-grid">{% include "core/partials/form.html" %}</div>
+      <div class="actions">
+        <button class="btn btn--primary">Save</button>
+        <a class="btn" href="{% url 'classroom:learner' section.pk learner.pk %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Remove from class</h2>
+    <p class="muted">Also deletes this learner's attendance and scores.</p>
+    <form method="post" action="{% url 'classroom:learner_delete' section.pk learner.pk %}" data-confirm="Remove {{ learner.name }} and their records?">{% csrf_token %}<button class="btn btn--danger">Remove learner</button></form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+{% block title %}Class record for Filipino teachers{% endblock %}
+{% block main %}
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Your class record, <em>done before the bell.</em></h1>
+      <p class="lede">Tala takes attendance from your seat plan or the learners' QR cards, computes term grades the DepEd way, and shows which competencies your class hasn't mastered yet.</p>
+      <div class="actions">
+        <form method="post" action="{% url 'accounts:demo' %}">{% csrf_token %}
+          <button class="btn btn--primary">Try the demo</button>
+        </form>
+        <a class="btn" href="{% url 'accounts:login' %}">Sign in</a>
+      </div>
+      <p class="muted small">The demo is yours alone: three classes of made-up learners, deleted after a day. No sign-up.</p>
+    </div>
+    <div class="hero__art" aria-hidden="true">
+      <div class="board">Board</div>
+      <div class="seats cols-5">
+        {% for s in "PPLPPPAPPEPPPPLPPPPP" %}<div class="seat seat--taken" data-status="{{ s }}"><span class="seat__badge">{{ s }}</span><span class="seat__init{% cycle '' ' seat__init--F' %}">{% cycle 'JR' 'AM' 'KS' 'LD' 'MB' 'RC' 'TG' 'NV' 'EP' 'CO' %}</span></div>{% endfor %}
+      </div>
+    </div>
+  </section>
+  <section class="features" aria-label="Features">
+    <div class="card feature"><div class="feature__icon" aria-hidden="true">✦</div><h2>Attendance three ways</h2><p>Tap faces on your seat plan, call names one by one, or scan QR cards with your phone camera.</p></div>
+    <div class="card feature"><div class="feature__icon" aria-hidden="true">✦</div><h2>Seat plan that moves</h2><p>Drag learners to seats, shuffle randomly or boy-girl, resize the room, print it.</p></div>
+    <div class="card feature"><div class="feature__icon" aria-hidden="true">✦</div><h2>Grades, transmuted</h2><p>Written work, performance tasks and exams weighted by subject, then transmuted to the quarterly grade.</p></div>
+    <div class="card feature"><div class="feature__icon" aria-hidden="true">✦</div><h2>Item analysis</h2><p>Check answers item by item to get the MPS and the least-mastered competencies.</p></div>
+    <div class="card feature"><div class="feature__icon" aria-hidden="true">✦</div><h2>Recitation picker</h2><p>Picks a random learner who is present today, without repeats.</p></div>
+    <div class="card feature"><div class="feature__icon" aria-hidden="true">✦</div><h2>Parent link</h2><p>Each learner gets a private read-only link to their attendance and scores.</p></div>
+  </section>
+</div>
+{% endblock %}

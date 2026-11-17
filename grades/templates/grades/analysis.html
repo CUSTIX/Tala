@@ -1,0 +1,63 @@
+{% extends "core/base.html" %}
+{% load tala %}
+{% block title %}Item analysis · {{ assessment.title }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page stack">
+  <div class="page-head">
+    <div>
+      <p class="small"><a href="{% url 'grades:book' section.pk %}?q={{ assessment.quarter }}">← Quarter {{ assessment.quarter }}</a></p>
+      <h2>Item analysis · {{ assessment.title }}</h2>
+      <p class="muted">{{ assessment.get_component_display }} · {{ assessment.date|date:"M j, Y" }}</p>
+    </div>
+    <div class="actions">
+      <a class="btn" href="{% url 'grades:responses' section.pk assessment.pk %}">Check answers</a>
+      <button class="btn js-only" type="button" data-print>Print</button>
+    </div>
+  </div>
+  {% if a.takers %}
+  <div class="stats">
+    <div class="stat"><b>{{ a.mps }}%</b><span>Mean percentage score · {{ a.level }}</span></div>
+    <div class="stat"><b>{{ a.mean }}</b><span>Mean score of {{ assessment.max_score|num }}</span></div>
+    <div class="stat"><b>{{ a.takers }}</b><span>Learners took it</span></div>
+    <div class="stat"><b>{{ a.highest|num }} / {{ a.lowest|num }}</b><span>Highest / lowest</span></div>
+  </div>
+  {% if a.competencies %}
+  <section class="card">
+    <h2>Competencies, least mastered first</h2>
+    <p class="muted small">Mastered when at least 75% of answers to its items are right.</p>
+    <ul class="comp-list">
+      {% for c in a.competencies %}
+      <li>
+        <div class="row">
+          <span>{{ c.competency }} <span class="muted small">(item{{ c.items|length|pluralize }} {{ c.items|join:", " }})</span></span>
+          <span class="nowrap"><b>{{ c.percent }}%</b> {% if c.mastered %}<span class="tag tag--ok">Mastered</span>{% else %}<span class="tag tag--warn">Least mastered</span>{% endif %}</span>
+        </div>
+        <meter min="0" max="100" low="50" high="75" optimum="100" value="{{ c.percent }}">{{ c.percent }}%</meter>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section>
+    <h2>Per item</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Competency</th><th class="num">Right</th><th class="num">%</th><th></th></tr></thead>
+        <tbody>
+        {% for s in a.items %}
+          <tr><td>{{ s.item.number }}</td><td class="small">{{ s.item.competency|default:"-" }}</td><td class="num">{{ s.correct }} / {{ s.answered }}</td><td class="num">{{ s.percent }}</td>
+            <td>{% if s.mastered %}<span class="tag tag--ok">OK</span>{% else %}<span class="tag tag--warn">Reteach</span>{% endif %}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% else %}
+  <div class="card"><p class="muted">Check answers item by item to see which competencies need reteaching.</p>
+    <a class="btn" href="{% url 'grades:items' section.pk assessment.pk %}">Check item by item</a></div>
+  {% endif %}
+  {% else %}
+  <div class="card empty"><p>No scores yet.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

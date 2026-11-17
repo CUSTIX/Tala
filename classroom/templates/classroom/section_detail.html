@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+{% block title %}{{ section.name }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page">
+  <div class="page-head">
+    <p class="muted">{{ learners|length }} learner{{ learners|length|pluralize }} · today:
+      {% for code, n in counts.items %}<span class="pill st-{{ code }}">{{ n }} {{ code }}</span> {% empty %}not taken yet{% endfor %}
+    </p>
+    <div class="actions">
+      <a class="btn btn--primary" href="{% url 'classroom:learners_add' section.pk %}">Add learners</a>
+      <a class="btn" href="{% url 'classroom:qr_cards' section.pk %}">Print QR cards</a>
+      <a class="btn" href="{% url 'classroom:section_edit' section.pk %}">Edit class</a>
+    </div>
+  </div>
+  {% if learners %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Learner</th><th>Attendance</th><th class="num">Rate</th></tr></thead>
+      <tbody>
+      {% regroup learners by get_sex_display as groups %}
+      {% for group in groups %}
+        <tr class="group-row"><td colspan="4">{{ group.grouper }} ({{ group.list|length }})</td></tr>
+        {% for x in group.list %}
+        <tr>
+          <td class="muted">{{ forloop.counter }}</td>
+          <td><a href="{% url 'classroom:learner' section.pk x.pk %}">{{ x.name }}</a></td>
+          <td>{% if x.rate is not None %}<meter min="0" max="100" low="80" high="90" optimum="100" value="{{ x.rate }}">{{ x.rate }}%</meter>{% else %}<span class="muted small">No records</span>{% endif %}</td>
+          <td class="num">{% if x.rate is not None %}{{ x.rate }}%{% else %}-{% endif %}</td>
+        </tr>
+        {% endfor %}
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="card empty">
+    <h2>No learners yet</h2>
+    <p>Paste the names from your list: boys and girls, one per line.</p>
+    <a class="btn btn--primary" href="{% url 'classroom:learners_add' section.pk %}">Add learners</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

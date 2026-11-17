@@ -1,0 +1,17 @@
+{% extends "core/base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Sign in</h1>
+  <form method="post">{% csrf_token %}
+    {% include "core/partials/form.html" %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="btn btn--primary">Sign in</button>
+  </form>
+</div>
+<div class="card">
+  <h2>Just looking?</h2>
+  <p class="muted">Try Tala with three classes of made-up learners. No account needed; the demo is deleted after a day.</p>
+  <form method="post" action="{% url 'accounts:demo' %}">{% csrf_token %}<button class="btn">Try the demo</button></form>
+</div>
+{% endblock %}

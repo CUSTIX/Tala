@@ -1,0 +1,4 @@
+<nav class="quarters" aria-label="Quarter">
+  {% for q in "1234" %}<a href="{% url 'grades:book' section.pk %}?q={{ q }}"{% if q|add:0 == quarter %} aria-current="page"{% endif %}>Q{{ q }}</a>{% endfor %}
+  <a href="{% url 'grades:final' section.pk %}"{% if not quarter %} aria-current="page"{% endif %}>Final</a>
+</nav>

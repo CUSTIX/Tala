@@ -1,0 +1,20 @@
+{% extends "core/base.html" %}
+{% block title %}Picker · {{ section.name }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page">
+  {{ names|json_script:"picker-names" }}
+  <div class="card picker" data-picker>
+    <p class="muted">Recitation: who's next?</p>
+    <p class="picker__name" data-picker-name aria-live="polite">Tap “Pick”</p>
+    <div class="actions actions--center">
+      <button class="btn btn--primary" type="button" data-picker-go>Pick</button>
+      <button class="btn" type="button" data-picker-reset>Start over</button>
+    </div>
+    <p><label class="check"><input type="checkbox" data-picker-present checked> Only learners present today</label></p>
+    <p class="small muted" data-picker-left></p>
+    <div class="chips" data-picker-done aria-label="Already picked"></div>
+    <noscript><p>The picker needs JavaScript.</p></noscript>
+  </div>
+</div>
+{% endblock %}

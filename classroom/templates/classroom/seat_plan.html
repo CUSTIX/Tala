@@ -1,0 +1,60 @@
+{% extends "core/base.html" %}
+{% block title %}Seat plan · {{ section.name }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page stack" data-seat-editor data-url="{% url 'classroom:seats' section.pk %}">
+  {% csrf_token %}
+  <p class="hint js-only no-print">Tap a learner, then tap a seat to move them there (swaps if taken). On a computer you can also drag. Tap the same learner again to cancel.</p>
+  <div class="room">
+    <div class="board">Front · board</div>
+    <div class="seats cols-{{ section.seat_cols }}">
+      {% for row in grid %}{% with r=forloop.counter0 %}{% for learner in row %}
+        {% if learner %}
+        <button type="button" class="seat seat--taken" data-seat data-row="{{ r }}" data-col="{{ forloop.counter0 }}" data-learner="{{ learner.pk }}" draggable="true" aria-label="{{ learner.name }}, row {{ r|add:1 }} column {{ forloop.counter }}">
+          <span class="seat__init{% if learner.sex == 'F' %} seat__init--F{% endif %}" aria-hidden="true">{{ learner.initials }}</span>
+          <span class="seat__name">{{ learner.short_name }}</span>
+        </button>
+        {% else %}
+        <button type="button" class="seat" data-seat data-row="{{ r }}" data-col="{{ forloop.counter0 }}" aria-label="Empty seat, row {{ r|add:1 }} column {{ forloop.counter }}"><span class="muted small" aria-hidden="true">·</span></button>
+        {% endif %}
+      {% endfor %}{% endwith %}{% endfor %}
+    </div>
+  </div>
+
+  <section class="card no-print">
+    <h2>Not seated ({{ unseated|length }})</h2>
+    <div class="dropzone" data-seat-off>
+      {% if unseated %}
+      <div class="chips">{% for x in unseated %}<button type="button" class="chip" data-chip data-learner="{{ x.pk }}" draggable="true">{{ x.short_name }}</button>{% endfor %}</div>
+      {% else %}<p class="muted small">Everyone has a seat. Drop a learner here to take them off the plan.</p>{% endif %}
+    </div>
+    {% if unseated %}
+    <form method="post" class="actions no-js-show">{% csrf_token %}<input type="hidden" name="action" value="fill"><button class="btn btn--small">Seat them in the first free seats</button></form>
+    {% endif %}
+  </section>
+
+  <div class="form-grid no-print">
+    <section class="card">
+      <h2>Rearrange</h2>
+      <form method="post" data-confirm="Rearrange the whole class?">{% csrf_token %}
+        <input type="hidden" name="action" value="arrange">
+        <div class="field"><label for="how">Order</label>
+          <select id="how" name="how">{% for key, label in arrangements.items %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select>
+        </div>
+        <div class="actions"><button class="btn btn--primary">Rearrange</button>
+          <button class="btn js-only" type="button" data-print>Print seat plan</button></div>
+      </form>
+      <form method="post" class="actions" data-confirm="Take everyone off the seat plan?">{% csrf_token %}<input type="hidden" name="action" value="clear"><button class="btn btn--link btn--danger">Clear all seats</button></form>
+    </section>
+    <section class="card">
+      <h2>Room size</h2>
+      <form method="post">{% csrf_token %}
+        <input type="hidden" name="action" value="resize">
+        <div class="form-grid">{% include "core/partials/form.html" with form=size_form %}</div>
+        <button class="btn">Save size</button>
+        <p class="help muted small">Learners whose seat disappears go to “Not seated”.</p>
+      </form>
+    </section>
+  </div>
+</div>
+{% endblock %}

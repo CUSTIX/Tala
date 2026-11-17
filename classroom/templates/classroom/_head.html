@@ -1,0 +1,14 @@
+<div class="class-head">
+  <p class="small muted"><a href="{% url 'classroom:dashboard' %}">My classes</a> / {{ section.school_year }}</p>
+  <div class="class-head__title">
+    <h1>{{ section.name }}</h1>
+    <span class="muted">{{ section.subject }}</span>
+  </div>
+  <nav class="tabs" aria-label="Class">
+    <a href="{% url 'classroom:section' section.pk %}"{% if tab == "learners" %} aria-current="page"{% endif %}>Learners</a>
+    <a href="{% url 'attendance:take' section.pk %}"{% if tab == "attendance" %} aria-current="page"{% endif %}>Attendance</a>
+    <a href="{% url 'classroom:seats' section.pk %}"{% if tab == "seats" %} aria-current="page"{% endif %}>Seat plan</a>
+    <a href="{% url 'grades:book' section.pk %}"{% if tab == "grades" %} aria-current="page"{% endif %}>Grades</a>
+    <a href="{% url 'classroom:picker' section.pk %}"{% if tab == "picker" %} aria-current="page"{% endif %}>Picker</a>
+  </nav>
+</div>

@@ -1,0 +1,29 @@
+{% extends "core/base.html" %}
+{% block title %}Final grades · {{ section.name }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page stack">
+  <div class="page-head">
+    {% include "grades/_quarters.html" with quarter=0 %}
+    <button class="btn js-only" type="button" data-print>Print</button>
+  </div>
+  <p class="muted small">Final grade = average of the quarterly grades so far, rounded. 75 and above passes.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th class="sticky-col">Learner</th><th class="num">Q1</th><th class="num">Q2</th><th class="num">Q3</th><th class="num">Q4</th><th class="num">Final</th><th>Remarks</th></tr></thead>
+      <tbody>
+      {% for r in rows %}
+        <tr>
+          <td class="sticky-col">{{ r.learner.name }}</td>
+          {% for g in r.quarters %}<td class="num">{{ g|default_if_none:"-" }}</td>{% endfor %}
+          <td class="num"><span class="grade{% if r.passed is False %} grade--low{% endif %}">{{ r.final|default_if_none:"-" }}</span></td>
+          <td class="small">{% if r.passed is None %}<span class="muted">-</span>{% elif r.passed %}Passed · {{ r.descriptor }}{% else %}<span class="grade--low">Failed</span>{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="muted">No learners yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

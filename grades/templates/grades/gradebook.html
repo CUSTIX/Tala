@@ -1,0 +1,66 @@
+{% extends "core/base.html" %}
+{% load tala %}
+{% block title %}Grades Q{{ quarter }} · {{ section.name }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page stack">
+  <div class="page-head">
+    {% include "grades/_quarters.html" %}
+    <div class="actions">
+      <a class="btn btn--primary" href="{% url 'grades:create' section.pk %}?q={{ quarter }}">Add quiz or task</a>
+      {% if assessments %}<a class="btn" href="?q={{ quarter }}&format=csv">Download CSV</a>{% endif %}
+    </div>
+  </div>
+
+  <div class="form-grid">
+    {% for component, items, weight in groups %}
+    <section class="card">
+      <h2>{{ component.label }} <span class="muted small">{% widthratio weight 1 100 %}%</span></h2>
+      {% if items %}
+      <ul class="comp-list">
+        {% for a in items %}
+        <li>
+          <div class="row">
+            <a href="{% url 'grades:scores' section.pk a.pk %}">{{ a.title }}</a>
+            <span class="muted small nowrap">{{ a.date|date:"M j" }} · {{ a.max_score|num }} pts</span>
+          </div>
+          {% if a.item_count %}<a class="small" href="{% url 'grades:analysis' section.pk a.pk %}">Item analysis</a>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="muted small">None yet.</p>
+      {% endif %}
+      <a class="btn btn--small" href="{% url 'grades:create' section.pk %}?q={{ quarter }}&c={{ component.value }}">Add</a>
+    </section>
+    {% endfor %}
+  </div>
+
+  {% if rows and assessments %}
+  <section>
+    <h2>Quarter {{ quarter }} grades</h2>
+    <p class="muted small">PS = percentage score, WS = weighted score. Initial grade is transmuted to the quarterly grade (DepEd Order No. 8, s. 2015).{% if rows.0.partial %} <span class="partial">SO FAR</span> means not every component has an assessment yet.{% endif %}</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th class="sticky-col">Learner</th><th class="num">WW PS</th><th class="num">PT PS</th><th class="num">QA PS</th><th class="num">Initial</th><th class="num">Quarterly</th><th>Remarks</th></tr>
+        </thead>
+        <tbody>
+        {% for r in rows %}
+          <tr>
+            <td class="sticky-col"><a href="{% url 'classroom:learner' section.pk r.learner.pk %}">{{ r.learner.name }}</a></td>
+            {% for key in "WW PT QA"|split_words %}{% with c=r.components|get:key %}<td class="num">{% if c.ps is None %}<span class="muted">-</span>{% else %}{{ c.ps }}{% endif %}</td>{% endwith %}{% endfor %}
+            <td class="num">{{ r.initial|default_if_none:"-" }}</td>
+            <td class="num"><span class="grade{% if r.quarterly < 75 %} grade--low{% endif %}">{{ r.quarterly|default_if_none:"-" }}</span>{% if r.partial %} <span class="partial">SO FAR</span>{% endif %}</td>
+            <td class="small muted">{{ r.descriptor }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% elif not rows %}
+  <div class="card empty"><p>Add learners to start a class record.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

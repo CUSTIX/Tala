@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% block title %}{% if section %}Edit class{% else %}New class{% endif %}{% endblock %}
+{% block content %}
+<p class="small"><a href="{% if section %}{% url 'classroom:section' section.pk %}{% else %}{% url 'classroom:dashboard' %}{% endif %}">← Back</a></p>
+<div class="card">
+  <h1>{% if section %}Edit class{% else %}New class{% endif %}</h1>
+  <form method="post">{% csrf_token %}
+    <div class="form-grid">{% include "core/partials/form.html" %}</div>
+    <button class="btn btn--primary">{% if section %}Save{% else %}Create class{% endif %}</button>
+  </form>
+</div>
+{% if section %}
+<div class="card">
+  <h2>Delete this class</h2>
+  <p class="muted">Deletes the learners, attendance and grades of {{ section }}. This can't be undone.</p>
+  <form method="post" action="{% url 'classroom:section_delete' section.pk %}" data-confirm="Delete {{ section }} and all its records?">{% csrf_token %}
+    <button class="btn btn--danger">Delete class</button>
+  </form>
+</div>
+{% endif %}
+{% endblock %}

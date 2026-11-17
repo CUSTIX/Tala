@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% block title %}{% if assessment %}Edit {{ assessment.title }}{% else %}Add quiz or task{% endif %}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page">
+  <div class="card">
+    <h2>{% if assessment %}Edit {{ assessment.title }}{% else %}Add a quiz, task or exam{% endif %}</h2>
+    <form method="post">{% csrf_token %}
+      <div class="form-grid">{% include "core/partials/form.html" %}</div>
+      <div class="actions">
+        <button class="btn btn--primary">{% if assessment %}Save{% else %}Add{% endif %}</button>
+        <a class="btn" href="{% url 'grades:book' section.pk %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+  {% if assessment %}
+  <div class="card">
+    <h2>Delete</h2>
+    <p class="muted">Deletes {{ assessment.title }} and every score in it.</p>
+    <form method="post" action="{% url 'grades:delete' section.pk assessment.pk %}" data-confirm="Delete {{ assessment.title }} and its scores?">{% csrf_token %}<button class="btn btn--danger">Delete</button></form>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

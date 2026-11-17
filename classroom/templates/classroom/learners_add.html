@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% block title %}Add learners{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page">
+  <div class="card">
+    <h2>Add learners</h2>
+    <p class="muted">New learners get the first free seats on the seat plan and their own QR card.</p>
+    <form method="post">{% csrf_token %}
+      <div class="form-grid">{% include "core/partials/form.html" %}</div>
+      <button class="btn btn--primary">Add learners</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

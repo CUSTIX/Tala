@@ -1,0 +1,47 @@
+{% extends "core/base.html" %}
+{% load tala %}
+{% block title %}{{ assessment.title }} · {{ section.name }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page stack">
+  <div class="page-head">
+    <div>
+      <p class="small"><a href="{% url 'grades:book' section.pk %}?q={{ assessment.quarter }}">← Quarter {{ assessment.quarter }}</a></p>
+      <h2>{{ assessment.title }}</h2>
+      <p class="muted">{{ assessment.get_component_display }} · {{ assessment.date|date:"M j, Y" }} · highest possible score {{ assessment.max_score|num }}</p>
+    </div>
+    <div class="actions">
+      {% if assessment.has_items %}
+        <a class="btn btn--primary" href="{% url 'grades:responses' section.pk assessment.pk %}">Check answers</a>
+        <a class="btn" href="{% url 'grades:analysis' section.pk assessment.pk %}">Item analysis</a>
+      {% else %}
+        <a class="btn" href="{% url 'grades:items' section.pk assessment.pk %}">Check item by item</a>
+      {% endif %}
+      <a class="btn" href="{% url 'grades:edit' section.pk assessment.pk %}">Edit</a>
+    </div>
+  </div>
+  {% if assessment.has_items %}
+    <p class="hint">Scores come from the item-by-item answers. Use “Check answers” to change them.</p>
+  {% endif %}
+  <form method="post">{% csrf_token %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Learner</th><th class="num">Score / {{ assessment.max_score|num }}</th></tr></thead>
+        <tbody>
+        {% for x in learners %}
+          <tr>
+            <td><label for="r-{{ x.pk }}">{{ x.name }}</label></td>
+            <td class="num"><input class="score-input" id="r-{{ x.pk }}" name="r-{{ x.pk }}" type="text" inputmode="decimal" autocomplete="off" value="{{ x.raw|num }}" data-score-input{% if assessment.has_items %} readonly{% endif %}></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="2" class="muted">No learners yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if not assessment.has_items and learners %}
+    <div class="save-bar"><div class="actions"><span class="small muted">Leave blank if the learner hasn't taken it. Enter moves down.</span><button class="btn btn--primary">Save scores</button></div></div>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "core/base.html" %}
+{% block title %}Items · {{ assessment.title }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page">
+  <div class="card">
+    <p class="small"><a href="{% url 'grades:scores' section.pk assessment.pk %}">← {{ assessment.title }}</a></p>
+    <h2>Items and competencies</h2>
+    <p class="muted">One line per item. Item analysis groups the items by competency to show the least mastered ones. Each item is worth one point.</p>
+    <form method="post">{% csrf_token %}
+      {% include "core/partials/form.html" %}
+      <button class="btn btn--primary">Save items</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

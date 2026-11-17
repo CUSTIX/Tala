@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+{% block title %}My classes{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Magandang araw, {{ user.display_name }}</h1>
+    <p class="muted">{{ today|date:"l, F j" }}</p>
+  </div>
+  <a class="btn btn--primary" href="{% url 'classroom:section_create' %}">New class</a>
+</div>
+{% if sections %}
+<div class="class-grid">
+  {% for s in sections %}
+  <article class="card class-card">
+    <div>
+      <h2><a href="{% url 'classroom:section' s.pk %}">{{ s.name }}</a></h2>
+      <p class="muted small">{{ s.subject }} · {{ s.size }} learner{{ s.size|pluralize }}</p>
+    </div>
+    {% if s.marked %}
+      <p class="small">Today:
+        {% if s.today.P %}<span class="pill st-P" title="Present">{{ s.today.P }} P</span>{% endif %}
+        {% if s.today.L %}<span class="pill st-L" title="Late">{{ s.today.L }} L</span>{% endif %}
+        {% if s.today.E %}<span class="pill st-E" title="Excused">{{ s.today.E }} E</span>{% endif %}
+        {% if s.today.A %}<span class="pill st-A" title="Absent">{{ s.today.A }} A</span>{% endif %}
+      </p>
+    {% else %}
+      <p class="small muted">No attendance yet today.</p>
+    {% endif %}
+    <div class="actions">
+      <a class="btn btn--primary btn--small" href="{% url 'attendance:take' s.pk %}">Take attendance</a>
+      <a class="btn btn--small" href="{% url 'attendance:scan' s.pk %}">Scan QR</a>
+      <a class="btn btn--small" href="{% url 'grades:book' s.pk %}">Grades</a>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card empty">
+  <h2>No classes yet</h2>
+  <p>Create your first class, then paste your learners' names.</p>
+  <a class="btn btn--primary" href="{% url 'classroom:section_create' %}">New class</a>
+</div>
+{% endif %}
+{% endblock %}

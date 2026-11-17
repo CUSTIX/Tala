@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+{% block title %}Attendance report · {{ section.name }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page">
+  <div class="page-head">
+    <div class="actions">
+      <a class="btn btn--small" href="?month={{ report.previous|date:'Y-m' }}" aria-label="Previous month">←</a>
+      <h2>{{ report.month|date:"F Y" }}</h2>
+      {% if not is_current %}<a class="btn btn--small" href="?month={{ report.next|date:'Y-m' }}" aria-label="Next month">→</a>{% endif %}
+    </div>
+    <div class="actions">
+      <a class="btn btn--small" href="{% url 'attendance:take' section.pk %}">Take attendance</a>
+      <a class="btn btn--small" href="?month={{ report.month|date:'Y-m' }}&format=csv">Download CSV</a>
+      <button class="btn btn--small js-only" type="button" data-print>Print</button>
+    </div>
+  </div>
+  {% if report.days %}
+  <div class="table-wrap">
+    <table class="month-grid">
+      <thead>
+        <tr><th class="sticky-col">Learner</th>{% for d in report.days %}<th title="{{ d|date:'l, F j' }}">{{ d|date:"j" }}<br><span class="small">{{ d|date:"D"|slice:":2" }}</span></th>{% endfor %}<th>P</th><th>L</th><th>E</th><th>A</th></tr>
+      </thead>
+      <tbody>
+      {% for row in report.rows %}
+        <tr>
+          <td class="sticky-col">{{ row.learner.name }}</td>
+          {% for c in row.cells %}<td>{% if c %}<span class="pill st-{{ c }}">{{ c }}</span>{% endif %}</td>{% endfor %}
+          <td>{{ row.totals.P|default:0 }}</td><td>{{ row.totals.L|default:0 }}</td><td>{{ row.totals.E|default:0 }}</td><td>{{ row.totals.A|default:0 }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="card empty"><p>No attendance taken in {{ report.month|date:"F" }}.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

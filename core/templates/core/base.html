@@ -1,0 +1,47 @@
+{% load static %}<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}Tala{% endblock %} · Tala</title>
+  <meta name="description" content="Tala is a class record for Filipino teachers: attendance by seat plan or QR card, DepEd grade computation and item analysis.">
+  <meta name="theme-color" content="#0f6b53">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap">
+  <link rel="stylesheet" href="{% static 'core/site.css' %}">
+  <link rel="icon" href="{% static 'core/favicon.svg' %}" type="image/svg+xml">
+  <link rel="manifest" href="{% static 'core/manifest.webmanifest' %}">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap top__in">
+    <a class="brand" href="{% if user.is_authenticated %}{% url 'classroom:dashboard' %}{% else %}{% url 'home' %}{% endif %}"><span class="brand__star" aria-hidden="true">✦</span> Tala</a>
+    <nav class="top__nav" aria-label="Account">
+      {% if user.is_authenticated %}
+        {% if user.is_demo %}<span class="demo-flag" title="Made-up learners, deleted after a day">DEMO</span>{% endif %}
+        <span class="top__who">{{ user.display_name }}</span>
+        <form method="post" action="{% url 'accounts:logout' %}" class="inline">{% csrf_token %}<button class="btn btn--small">Sign out</button></form>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Sign in</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+{% if messages %}
+<ul class="messages wrap" role="status">
+  {% for message in messages %}<li class="message{% if message.tags == 'error' %} message--error{% endif %}">{{ message }}</li>{% endfor %}
+</ul>
+{% endif %}
+<main id="main">
+{% block main %}<div class="wrap page">{% block content %}{% endblock %}</div>{% endblock %}
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <p><strong>Tala</strong>, a portfolio project. Grades follow DepEd Order No. 8, s. 2015. Demo learners are made up.</p>
+  </div>
+</footer>
+<script src="{% static 'core/app.js' %}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

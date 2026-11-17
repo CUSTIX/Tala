@@ -1,0 +1,9 @@
+{
+  "name": "Tala class record",
+  "short_name": "Tala",
+  "start_url": "/app/",
+  "display": "standalone",
+  "background_color": "#f6f2ea",
+  "theme_color": "#0f6b53",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+{% block title %}Check answers · {{ assessment.title }}{% endblock %}
+{% block main %}
+<div class="wrap">{% include "classroom/_head.html" %}</div>
+<div class="wrap page stack">
+  <div class="page-head">
+    <div>
+      <p class="small"><a href="{% url 'grades:scores' section.pk assessment.pk %}">← {{ assessment.title }}</a></p>
+      <h2>Check answers</h2>
+      <p class="muted">Tick each item a learner got right. Untick “Took it” for a learner who missed the quiz.</p>
+    </div>
+    <div class="actions"><a class="btn" href="{% url 'grades:items' section.pk assessment.pk %}">Edit items</a></div>
+  </div>
+  <form method="post" data-responses>{% csrf_token %}
+    <div class="table-wrap">
+      <table class="resp">
+        <thead><tr><th class="sticky-col">Learner</th><th>Took it</th><th class="num">Score</th>{% for i in items %}<th title="{{ i.competency }}">{{ i.number }}</th>{% endfor %}</tr></thead>
+        <tbody>
+        {% for learner, took, cells in rows %}
+          <tr data-resp-row{% if not took %} class="is-off"{% endif %}>
+            <td class="sticky-col">{{ learner.name }}</td>
+            <td><input type="checkbox" name="t-{{ learner.pk }}" value="1" aria-label="{{ learner.name }} took the quiz" data-took{% if took %} checked{% endif %}></td>
+            <td class="num" data-row-score></td>
+            {% for item, right in cells %}<td><input type="checkbox" name="c-{{ learner.pk }}-{{ item.pk }}" value="1" aria-label="{{ learner.name }}, item {{ item.number }}" data-item{% if right %} checked{% endif %}></td>{% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="save-bar"><div class="actions"><span class="small muted">{{ items|length }} items, 1 point each.</span><button class="btn btn--primary">Save and see analysis</button></div></div>
+  </form>
+</div>
+{% endblock %}

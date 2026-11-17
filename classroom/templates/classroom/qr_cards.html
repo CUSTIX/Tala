@@ -1,0 +1,23 @@
+{% extends "core/base.html" %}
+{% block title %}QR cards · {{ section.name }}{% endblock %}
+{% block content %}
+<div class="page-head no-print">
+  <div>
+    <p class="small"><a href="{% url 'classroom:section' section.pk %}">← {{ section.name }}</a></p>
+    <h1>QR cards</h1>
+    <p class="muted">Print, cut and give each learner their card. Scan them in Attendance › Scan QR.</p>
+  </div>
+  <button class="btn btn--primary js-only" type="button" data-print>Print</button>
+</div>
+<div class="qr-sheet">
+  {% for learner, svg in cards %}
+  <div class="qr-card">
+    {{ svg }}
+    <div class="qr-card__name">{{ learner.first_name }} {{ learner.last_name }}</div>
+    <div class="qr-card__meta">{{ section.name }} · {{ section.school_year }}</div>
+  </div>
+  {% empty %}
+  <p class="muted">No learners yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

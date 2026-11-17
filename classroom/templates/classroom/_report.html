@@ -1,0 +1,33 @@
+{% load tala %}{# Attendance totals and grades per quarter: shared by the teacher's learner page and the parent link. #}
+<section class="card">
+  <h2>Attendance</h2>
+  <div class="stats">
+    <div class="stat"><b>{{ totals.present }}</b><span>Present</span></div>
+    <div class="stat"><b>{{ totals.late }}</b><span>Late</span></div>
+    <div class="stat"><b>{{ totals.excused }}</b><span>Excused</span></div>
+    <div class="stat"><b>{{ totals.absent }}</b><span>Absent</span></div>
+  </div>
+</section>
+{% for q in quarters %}
+<section class="card">
+  <div class="page-head">
+    <h2>Quarter {{ q.quarter }}</h2>
+    {% if q.row.quarterly is not None %}
+    <p><span class="grade{% if q.row.quarterly < 75 %} grade--low{% endif %}">{{ q.row.quarterly }}</span> <span class="muted small">{{ q.row.descriptor }}</span>{% if q.row.partial %} <span class="partial">SO FAR</span>{% endif %}</p>
+    {% endif %}
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Assessment</th><th>Type</th><th class="num">Score</th></tr></thead>
+      <tbody>
+      {% for a in q.assessments %}
+        <tr><td>{{ a.title }}</td><td class="muted small">{{ a.get_component_display }}</td>
+          <td class="num nowrap">{% with v=q.row.scores|get:a.pk %}{% if v is None %}<span class="muted">-</span>{% else %}{{ v|num }}{% endif %}{% endwith %} / {{ a.max_score|num }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% empty %}
+<section class="card"><p class="muted">No scores recorded yet.</p></section>
+{% endfor %}
